@@ -6,6 +6,8 @@ Custom node for the use of HiDiffusion technology: https://github.com/megvii-res
 
 **Please refer to the original project for details and specifications.**
 
+https://hidiffusion.github.io/
+
 **_If this project is useful to you and you like it, please consider a small donation to the author._**
 
 ➡️ https://ko-fi.com/stefanoflore75
