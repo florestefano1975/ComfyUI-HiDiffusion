@@ -28,6 +28,9 @@ class HiDiffusionSDXL:
     @classmethod
     def INPUT_TYPES(s):
         return {
+            "optional": {
+                "seed": ("INT", {"forceInput": False}),
+            },
             "required": {
                 "positive_prompt": ("STRING", {
                     "multiline": True,
@@ -67,7 +70,7 @@ class HiDiffusionSDXL:
     FUNCTION = "hi_diff_sdxl"
     CATEGORY = "AI WizArt/HiDiffusion"
 
-    def hi_diff_sdxl(self, positive_prompt="", negative_prompt="", guidance_scale=7.5, width=2048, height=2048, eta=1.0):
+    def hi_diff_sdxl(self, positive_prompt="", negative_prompt="", guidance_scale=7.5, width=2048, height=2048, eta=1.0, seed=False):
         pretrain_model = "stabilityai/stable-diffusion-xl-base-1.0"
         scheduler = DDIMScheduler.from_pretrained(pretrain_model, subfolder="scheduler")
         pipe = StableDiffusionXLPipeline.from_pretrained(pretrain_model, scheduler = scheduler, torch_dtype=torch.float16, variant="fp16").to("cuda")
@@ -91,6 +94,9 @@ class HiDiffusionSDXLTurbo:
     @classmethod
     def INPUT_TYPES(s):
         return {
+            "optional": {
+                "seed": ("INT", {"forceInput": False}),
+            },
             "required": {
                 "positive_prompt": ("STRING", {
                     "multiline": True,
@@ -125,7 +131,7 @@ class HiDiffusionSDXLTurbo:
     FUNCTION = "hi_diff_sdxlturbo"
     CATEGORY = "AI WizArt/HiDiffusion"
 
-    def hi_diff_sdxlturbo(self, positive_prompt="", guidance_scale=7.5, width=1024, height=1024, eta=1.0, inference_steps=4):
+    def hi_diff_sdxlturbo(self, positive_prompt="", guidance_scale=7.5, width=1024, height=1024, eta=1.0, inference_steps=4, seed=False):
         pretrain_model = "stabilityai/sdxl-turbo"
         pipe = AutoPipelineForText2Image.from_pretrained(pretrain_model, torch_dtype=torch.float16, variant="fp16").to('cuda')
         pipe.enable_xformers_memory_efficient_attention()
@@ -148,6 +154,9 @@ class HiDiffusionSD21:
     @classmethod
     def INPUT_TYPES(s):
         return {
+            "optional": {
+                "seed": ("INT", {"forceInput": False}),
+            },
             "required": {
                 "positive_prompt": ("STRING", {
                     "multiline": True,
@@ -187,7 +196,7 @@ class HiDiffusionSD21:
     FUNCTION = "hi_diff_sd21"
     CATEGORY = "AI WizArt/HiDiffusion"
 
-    def hi_diff_sd21(self, positive_prompt="", negative_prompt="", guidance_scale=7.5, width=1024, height=1024, eta=1.0):
+    def hi_diff_sd21(self, positive_prompt="", negative_prompt="", guidance_scale=7.5, width=1024, height=1024, eta=1.0, seed=False):
         pretrain_model = "stabilityai/stable-diffusion-2-1-base"
         scheduler = DDIMScheduler.from_pretrained(pretrain_model, subfolder="scheduler")
         pipe = DiffusionPipeline.from_pretrained(pretrain_model, scheduler = scheduler, torch_dtype=torch.float16).to("cuda")
@@ -211,6 +220,9 @@ class HiDiffusionSD15:
     @classmethod
     def INPUT_TYPES(s):
         return {
+            "optional": {
+                "seed": ("INT", {"forceInput": False}),
+            },
             "required": {
                 "positive_prompt": ("STRING", {
                     "multiline": True,
@@ -250,7 +262,7 @@ class HiDiffusionSD15:
     FUNCTION = "hi_diff_sd15"
     CATEGORY = "AI WizArt/HiDiffusion"
 
-    def hi_diff_sd15(self, positive_prompt="", negative_prompt="", guidance_scale=7.5, width=1024, height=1024, eta=1.0):
+    def hi_diff_sd15(self, positive_prompt="", negative_prompt="", guidance_scale=7.5, width=1024, height=1024, eta=1.0, seed=False):
         pretrain_model = "runwayml/stable-diffusion-v1-5"
         scheduler = DDIMScheduler.from_pretrained(pretrain_model, subfolder="scheduler")
         pipe = DiffusionPipeline.from_pretrained(pretrain_model, scheduler = scheduler, torch_dtype=torch.float16).to("cuda")
