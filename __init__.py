@@ -1,3 +1,9 @@
+# ComfyUI-HiDiffusion
+# Created by AI Wiz Art (Stefano Flore)
+# Version: 1.0
+# https://stefanoflore.it
+# https://ai-wiz.art
+
 from hidiffusion import apply_hidiffusion, remove_hidiffusion
 from diffusers import StableDiffusionXLPipeline, DDIMScheduler, AutoPipelineForText2Image, DiffusionPipeline
 import torch
