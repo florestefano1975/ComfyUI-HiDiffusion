@@ -1,6 +1,6 @@
 # ComfyUI-HiDiffusion
 # Created by AI Wiz Art (Stefano Flore)
-# Version: 1.0
+# Version: 1.1
 # https://stefanoflore.it
 # https://ai-wiz.art
 
