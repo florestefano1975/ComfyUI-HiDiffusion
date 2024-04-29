@@ -10,7 +10,7 @@ https://hidiffusion.github.io/
 
 ## Important update!
 
-**The node for using SDXL models now uses any locally downloaded checkpoint!**
+**The node for using SDXL now uses any locally downloaded checkpoint!**
 
 ![ComfyUI-HiDiffusion SDXL node](/assets/sdxl.png)
 
