@@ -1,13 +1,16 @@
 # ComfyUI-HiDiffusion
 # Created by AI Wiz Art (Stefano Flore)
-# Version: 1.1
+# Version: 1.2
 # https://stefanoflore.it
 # https://ai-wiz.art
 
-from hidiffusion import apply_hidiffusion, remove_hidiffusion
+from .hidiffusion import apply_hidiffusion, remove_hidiffusion
 from diffusers import StableDiffusionXLPipeline, DDIMScheduler, AutoPipelineForText2Image, DiffusionPipeline
 import torch
 import numpy as np
+import comfy.sd
+import folder_paths as comfy_paths
+import os
 
 # ========================================================
 # IMAGE TO TENSOR
@@ -28,10 +31,8 @@ class HiDiffusionSDXL:
     @classmethod
     def INPUT_TYPES(s):
         return {
-            "optional": {
-                "seed": ("INT", {"forceInput": False}),
-            },
             "required": {
+                "ckpt_name": (comfy_paths.get_filename_list("checkpoints"),),
                 "positive_prompt": ("STRING", {
                     "multiline": True,
                     "default": "Standing tall amidst the ruins, a stone golem awakens, vines and flowers sprouting from the crevices in its body."
@@ -61,7 +62,8 @@ class HiDiffusionSDXL:
                     "default": 2048,
                     "min": 0,
                     "max": 9999999
-                })
+                }),
+                "seed": ("INT", {"forceInput": False}),
             }
         }
     
@@ -70,14 +72,13 @@ class HiDiffusionSDXL:
     FUNCTION = "hi_diff_sdxl"
     CATEGORY = "AI WizArt/HiDiffusion"
 
-    def hi_diff_sdxl(self, positive_prompt="", negative_prompt="", guidance_scale=7.5, width=2048, height=2048, eta=1.0, seed=False):
-        pretrain_model = "stabilityai/stable-diffusion-xl-base-1.0"
-        scheduler = DDIMScheduler.from_pretrained(pretrain_model, subfolder="scheduler")
-        pipe = StableDiffusionXLPipeline.from_pretrained(pretrain_model, scheduler = scheduler, torch_dtype=torch.float16, variant="fp16").to("cuda")
+    def hi_diff_sdxl(self, positive_prompt="", negative_prompt="", guidance_scale=7.5, width=2048, height=2048, eta=1.0, seed=False, ckpt_name=""):
+        ckpt_path = comfy_paths.get_full_path("checkpoints", ckpt_name)
+        pipe = StableDiffusionXLPipeline.from_single_file(ckpt_path, torch_dtype=torch.float16).to("cuda")
         pipe.enable_xformers_memory_efficient_attention()
         pipe.enable_model_cpu_offload()
         pipe.enable_vae_tiling()
-        apply_hidiffusion(pipe)
+        apply_hidiffusion(pipe, True, True, "SDXL")
         image = pipe(prompt=positive_prompt, guidance_scale=guidance_scale, height=height, width=width, eta=eta, negative_prompt=negative_prompt).images[0]
         output_t = pil2tensor(image)
         return (output_t,)
@@ -137,7 +138,7 @@ class HiDiffusionSDXLTurbo:
         pipe.enable_xformers_memory_efficient_attention()
         pipe.enable_model_cpu_offload()
         pipe.enable_vae_tiling()
-        apply_hidiffusion(pipe)
+        apply_hidiffusion(pipe, True, True, "SDXLTurbo")
         image = pipe(prompt=positive_prompt, num_inference_steps=inference_steps, height=height, width=width, guidance_scale=guidance_scale).images[0]
         output_t = pil2tensor(image)
         return (output_t,)
@@ -203,7 +204,7 @@ class HiDiffusionSD21:
         pipe.enable_xformers_memory_efficient_attention()
         pipe.enable_model_cpu_offload()
         pipe.enable_vae_tiling()
-        apply_hidiffusion(pipe)
+        apply_hidiffusion(pipe, True, True, "SD2.1")
         image = pipe(prompt=positive_prompt, guidance_scale=guidance_scale, height=height, width=width, eta=eta, negative_prompt=negative_prompt).images[0]
         output_t = pil2tensor(image)
         return (output_t,)
@@ -269,7 +270,7 @@ class HiDiffusionSD15:
         pipe.enable_xformers_memory_efficient_attention()
         pipe.enable_model_cpu_offload()
         pipe.enable_vae_tiling()
-        apply_hidiffusion(pipe)
+        apply_hidiffusion(pipe, True, True, "SD1.5")
         image = pipe(prompt=positive_prompt, guidance_scale=guidance_scale, height=height, width=width, eta=eta, negative_prompt=negative_prompt).images[0]
         output_t = pil2tensor(image)
         return (output_t,)

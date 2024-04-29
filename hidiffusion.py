@@ -1789,7 +1789,8 @@ def hook_diffusion_model(model: torch.nn.Module):
 def apply_hidiffusion(
         model: torch.nn.Module,
         apply_raunet: bool = True,
-        apply_window_attn: bool = True):
+        apply_window_attn: bool = True,
+        model_type = False):
     """
     model: diffusers model. We support SD 1.5, 2.1, XL, XL Turbo.
     
@@ -1830,10 +1831,10 @@ def apply_hidiffusion(
             name_or_path = 'stabilityai/stable-diffusion-xl-base-1.0'
 
     diffusion_model.info = {'size': None, 'hooks': [], 'scheduler': model.scheduler, 'use_controlnet': hasattr(model, 'controlnet'),
-                            'is_inpainting_task': 'inpainting' in model.name_or_path, 'is_playground': 'playground' in model.name_or_path}
+                            'is_inpainting_task': 'inpainting' in name_or_path, 'is_playground': 'playground' in name_or_path}
     hook_diffusion_model(diffusion_model)
     
-    if name_or_path in ['runwayml/stable-diffusion-v1-5', 'stabilityai/stable-diffusion-2-1-base']:
+    if model_type == "SD1.5" or model_type == "SD2.1":
         modified_key = sd15_hidiffusion_key()
         for key, module in diffusion_model.named_modules():
             if apply_raunet and key in modified_key['down_module_key']:
@@ -1858,7 +1859,7 @@ def apply_hidiffusion(
             module.model = 'sd15'
             module.info = diffusion_model.info
             
-    elif name_or_path in ['stabilityai/stable-diffusion-xl-base-1.0', 'diffusers/stable-diffusion-xl-1.0-inpainting-0.1']: 
+    elif model_type == "SDXL":
         modified_key = sdxl_hidiffusion_key()
         for key, module in diffusion_model.named_modules():
             if apply_raunet and key in modified_key['down_module_key']:
@@ -1887,7 +1888,7 @@ def apply_hidiffusion(
             module.model = 'sdxl'
             module.info = diffusion_model.info
                 
-    elif name_or_path == 'stabilityai/sdxl-turbo': 
+    elif model_type == "SDXLTurbo":
         modified_key = sdxl_turbo_hidiffusion_key()
         for key, module in diffusion_model.named_modules():
             if apply_raunet and key in modified_key['down_module_key']:

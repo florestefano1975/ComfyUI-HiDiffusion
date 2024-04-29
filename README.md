@@ -8,6 +8,12 @@ Custom node for the use of HiDiffusion technology: https://github.com/megvii-res
 
 https://hidiffusion.github.io/
 
+## Important update!
+
+**The node for using SDXL models now uses any locally downloaded model!**
+
+![ComfyUI-HiDiffusion SDXL node](/assets/sdxl.png)
+
 ## Other projects
 
 - [ComfyUI Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master/)
