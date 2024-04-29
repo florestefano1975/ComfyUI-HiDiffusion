@@ -1,6 +1,7 @@
-torch==1.13.1
-diffusers==0.27.0
-transformers==4.27.4
-accelerate==0.18.0
-xformers==0.0.16rc425
+torch
+diffusers
+transformers
+accelerate
+xformers
 librosa
+hidiffusion
