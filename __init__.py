@@ -1,11 +1,21 @@
 # ComfyUI-HiDiffusion
 # Created by AI Wiz Art (Stefano Flore)
-# Version: 1.2
+# Version: 1.3
 # https://stefanoflore.it
 # https://ai-wiz.art
 
 from .hidiffusion import apply_hidiffusion, remove_hidiffusion
-from diffusers import StableDiffusionXLPipeline, DDIMScheduler, AutoPipelineForText2Image, DiffusionPipeline
+from diffusers import StableDiffusionXLPipeline, StableDiffusionPipeline, AutoPipelineForText2Image, DiffusionPipeline
+from diffusers import DPMSolverMultistepScheduler
+from diffusers import DPMSolverSinglestepScheduler
+from diffusers import KDPM2DiscreteScheduler
+from diffusers import KDPM2AncestralDiscreteScheduler
+from diffusers import EulerDiscreteScheduler
+from diffusers import EulerAncestralDiscreteScheduler
+from diffusers import HeunDiscreteScheduler
+from diffusers import LMSDiscreteScheduler
+from diffusers import UniPCMultistepScheduler
+from diffusers import DDIMScheduler
 import torch
 import numpy as np
 import comfy.sd
@@ -18,6 +28,66 @@ import os
 
 def pil2tensor(image):
     return torch.from_numpy(np.array(image).astype(np.float32) / 255.0).unsqueeze(0)
+
+# ========================================================
+# SCHEDULERS
+# ========================================================
+
+scheduler_list = [
+    "DDIM",
+    "DPM++ 2M",
+    "DPM++ 2M Karras",
+    "DPM++ 2M SDE",
+    "DPM++ 2M SDE Karras",
+    "DPM++ SDE",
+    "DPM++ SDE Karras",
+    "DPM2",
+    "DPM2 Karras",
+    "DPM2 a",
+    "DPM2 a Karras",
+    "Euler",
+    "Euler a",
+    "Heun",
+    "LMS",
+    "LMS Karras",
+    "UniPC",
+]
+
+def get_sheduler(name):
+    scheduler = False
+    if name == "DPM++ 2M":
+        scheduler = DPMSolverMultistepScheduler()
+    elif name == "DPM++ 2M Karras":
+        scheduler = DPMSolverMultistepScheduler(use_karras_sigmas=True)
+    elif name == "DPM++ 2M SDE":
+        scheduler = DPMSolverMultistepScheduler(algorithm_type="sde-dpmsolver++")
+    elif name == "DPM++ 2M SDE Karras":
+        scheduler = DPMSolverMultistepScheduler(use_karras_sigmas=True, algorithm_type="sde-dpmsolver++")
+    elif name == "DPM++ SDE":
+        scheduler = DPMSolverSinglestepScheduler()
+    elif name == "DPM++ SDE Karras":
+        scheduler = DPMSolverSinglestepScheduler(use_karras_sigmas=True)
+    elif name == "DPM2":
+        scheduler = KDPM2DiscreteScheduler()
+    elif name == "DPM2 Karras":
+        scheduler = KDPM2DiscreteScheduler(use_karras_sigmas=True)
+    elif name == "DPM2 a":
+        scheduler = KDPM2AncestralDiscreteScheduler()
+    elif name == "DPM2 a Karras":
+        scheduler = KDPM2AncestralDiscreteScheduler(use_karras_sigmas=True)
+    elif name == "Euler":
+        scheduler = EulerDiscreteScheduler()
+    elif name == "Euler a":
+        scheduler = EulerAncestralDiscreteScheduler()
+    elif name == "Heun":
+        scheduler = HeunDiscreteScheduler()
+    elif name == "LMS":
+        scheduler = LMSDiscreteScheduler()
+    elif name == "LMS Karras":
+        scheduler = LMSDiscreteScheduler(use_karras_sigmas=True)
+    elif name == "UniPC":
+        scheduler = UniPCMultistepScheduler()
+    return scheduler
 
 # ========================================================
 # SDXL
@@ -33,6 +103,9 @@ class HiDiffusionSDXL:
         return {
             "required": {
                 "ckpt_name": (comfy_paths.get_filename_list("checkpoints"),),
+                "apply_raunet": ("BOOLEAN", {"default": True},),
+                "apply_window_attn": ("BOOLEAN", {"default": True},),
+                "optimizations": ("BOOLEAN", {"default": True},),
                 "positive_prompt": ("STRING", {
                     "multiline": True,
                     "default": "Standing tall amidst the ruins, a stone golem awakens, vines and flowers sprouting from the crevices in its body."
@@ -40,6 +113,12 @@ class HiDiffusionSDXL:
                 "negative_prompt": ("STRING", {
                     "multiline": True,
                     "default": "blurry, ugly, duplicate, poorly drawn face, deformed, mosaic, artifacts, bad limbs"
+                }),
+                "steps": ("INT", {
+                    "default": 50,
+                    "min": 1,
+                    "max": 200,
+                    "step": 1
                 }),
                 "guidance_scale": ("FLOAT", {
                     "default": 7.5,
@@ -53,6 +132,7 @@ class HiDiffusionSDXL:
                     "max": 1,
                     "step": 0.01
                 }),
+                "scheduler": (scheduler_list,),
                 "width": ("INT", {
                     "default": 2048,
                     "min": 0,
@@ -72,14 +152,19 @@ class HiDiffusionSDXL:
     FUNCTION = "hi_diff_sdxl"
     CATEGORY = "AI WizArt/HiDiffusion"
 
-    def hi_diff_sdxl(self, positive_prompt="", negative_prompt="", guidance_scale=7.5, width=2048, height=2048, eta=1.0, seed=False, ckpt_name=""):
+    def hi_diff_sdxl(self, positive_prompt="", negative_prompt="", guidance_scale=7.5, width=2048, height=2048, eta=1.0, seed=False, ckpt_name="", apply_raunet=True, apply_window_attn=True, optimizations=True, scheduler="", steps=50):
         ckpt_path = comfy_paths.get_full_path("checkpoints", ckpt_name)
-        pipe = StableDiffusionXLPipeline.from_single_file(ckpt_path, torch_dtype=torch.float16).to("cuda")
-        pipe.enable_xformers_memory_efficient_attention()
-        pipe.enable_model_cpu_offload()
-        pipe.enable_vae_tiling()
-        apply_hidiffusion(pipe, True, True, "SDXL")
-        image = pipe(prompt=positive_prompt, guidance_scale=guidance_scale, height=height, width=width, eta=eta, negative_prompt=negative_prompt).images[0]
+        scheduler_apply = get_sheduler(scheduler)
+        if scheduler_apply == False:
+            pipe = StableDiffusionXLPipeline.from_single_file(ckpt_path, torch_dtype=torch.float16).to("cuda")
+        else:
+            pipe = StableDiffusionXLPipeline.from_single_file(ckpt_path, scheduler=scheduler_apply, torch_dtype=torch.float16).to("cuda")
+        if optimizations:
+            pipe.enable_xformers_memory_efficient_attention()
+            pipe.enable_model_cpu_offload()
+            pipe.enable_vae_tiling()
+        apply_hidiffusion(pipe, apply_raunet, apply_window_attn, "SDXL")
+        image = pipe(prompt=positive_prompt, num_inference_steps=steps, guidance_scale=guidance_scale, height=height, width=width, eta=eta, negative_prompt=negative_prompt).images[0]
         output_t = pil2tensor(image)
         return (output_t,)
 
@@ -283,12 +368,12 @@ NODE_CLASS_MAPPINGS = {
     "HiDiffusionSDXL": HiDiffusionSDXL,
     "HiDiffusionSDXLTurbo": HiDiffusionSDXLTurbo,
     "HiDiffusionSD21": HiDiffusionSD21,
-    "HiDiffusionSD15": HiDiffusionSD15
+    "HiDiffusionSD15": HiDiffusionSD15,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "HiDiffusionSDXL": "HiDiffusion SDXL",
     "HiDiffusionSDXLTurbo": "HiDiffusion SDXL Turbo",
     "HiDiffusionSD21": "HiDiffusion SD 2.1",
-    "HiDiffusionSD15": "HiDiffusion SD 1.5"
+    "HiDiffusionSD15": "HiDiffusion SD 1.5",
 }

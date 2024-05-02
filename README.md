@@ -8,11 +8,27 @@ Custom node for the use of HiDiffusion technology: https://github.com/megvii-res
 
 https://hidiffusion.github.io/
 
-## Important update!
+## SDXL Node Updates
 
-**The node for using SDXL now uses any locally downloaded checkpoint!**
+The node dedicated to SDXL models has more options:
 
-![ComfyUI-HiDiffusion SDXL node](/assets/sdxl.png)
+- **ckpt_name**
+- **apply_raunet**
+- **apply_window_attn**
+- **optimizations**
+- **steps**
+- **guidance_scale**
+- **scheduler**
+
+I will run tests to be able to implement the same number of options in the other nodes as well.
+
+![ComfyUI-HiDiffusion SDXL node](/assets/sdxl-2.png)
+
+![ComfyUI-HiDiffusion SDXL node](/assets/sdxl-3.png)
+
+## Docs
+
+- Diffusers: https://huggingface.co/docs/diffusers/v0.27.2/en/api/schedulers/overview
 
 ## Other projects
 
