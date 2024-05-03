@@ -1,6 +1,6 @@
 ## ComfyUI-HiDiffusion
 
-Custom node for the use of HiDiffusion technology: https://github.com/megvii-research/HiDiffusion/
+Custom node for the use of HiDiffusion technology.
 
 ![ComfyUI-HiDiffusion nodes](/assets/overview.png)
 
@@ -28,6 +28,7 @@ I will run tests to be able to implement the same number of options in the other
 
 ## Docs
 
+- HiDiffusion official repository: https://github.com/megvii-research/HiDiffusion/
 - Diffusers: https://huggingface.co/docs/diffusers/v0.27.2/en/api/schedulers/overview
 
 ## Other projects
