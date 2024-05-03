@@ -6,8 +6,6 @@ Custom node for the use of HiDiffusion technology.
 
 **Please refer to the original project for details and specifications.**
 
-https://hidiffusion.github.io/
-
 ## SDXL Node Updates
 
 The node dedicated to SDXL models has more options:
@@ -28,7 +26,8 @@ I will run tests to be able to implement the same number of options in the other
 
 ## Docs
 
-- HiDiffusion official repository: https://github.com/megvii-research/HiDiffusion/
+- HiDiffusion project page: https://hidiffusion.github.io/
+- HiDiffusion repository: https://github.com/megvii-research/HiDiffusion/
 - Diffusers: https://huggingface.co/docs/diffusers/v0.27.2/en/api/schedulers/overview
 
 ## Other projects
