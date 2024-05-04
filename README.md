@@ -32,6 +32,16 @@ I will run tests to be able to implement the same number of options in the other
 
 ![ComfyUI-HiDiffusion SDXL node](/assets/sdxl-3.png)
 
+## Sample image
+
+Native resolution: 4096×2304 (16:9 widescreen)
+
+Model: FormulaXL2 / Steps: 50 / CFG: 7.5 / Scheduler: DDIM
+
+Prompt: __beautiful landscape, mountains, snowy, sunset__
+
+![ComfyUI-HiDiffusion sample image 4096×2304](/assets/comfyui-hidiffusion-4096x2304.jpg)
+
 ## Docs
 
 - HiDiffusion project page: https://hidiffusion.github.io/
