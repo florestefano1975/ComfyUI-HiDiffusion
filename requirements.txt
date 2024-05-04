@@ -1,7 +1,0 @@
-torch
-diffusers
-transformers
-accelerate
-xformers
-librosa
-hidiffusion
