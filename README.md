@@ -6,7 +6,9 @@ Custom node for the use of HiDiffusion technology.
 
 **Please refer to the original project for details and specifications.**
 
-## !!WARNINGS!!
+## 🛑!!WARNINGS!!🛑
+
+**This project is under development and testing.**
 
 **Several bugs and malfunctions of ComfyUI were found after the nodes were installed. I recommend testing them beforehand in a separate installation to avoid problems and program crashes.**
 
