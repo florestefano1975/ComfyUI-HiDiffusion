@@ -1,6 +1,6 @@
 [project]
 name = "comfyui-hidiffusion"
-description = ""
+description = "Simple custom nodes for testing and use HiDiffusion technology: https://github.com/megvii-research/HiDiffusion/"
 version = "1.0.0"
 license = "LICENSE"
 
